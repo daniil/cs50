@@ -16,17 +16,11 @@ int main(void)
         for (int j = 0; j < colNum; j++)
         {
             // 0: 0 1 2  ..#
-            // 1: 0 1 2. .##
+            // 1: 0 1 2  .##
             // 2: 0 1 2  ###
 
-            if (colNum - j - 1 > i)
-            {
-                printf(" ");
-            }
-            else
-            {
-                printf("#");
-            }
+            printf(colNum - j - 1 > i ? " " : "#");
+
         }
         printf("\n");
     }
