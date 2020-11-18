@@ -1,0 +1,5 @@
+1. Ask user for column input
+2. If an input is not a positive integer keep asking for input
+3. Iterate over amount of columns requested
+4. Iterate over amount of rows requested
+5. For each row add empty spaces for each column (int - currRow + 1)
