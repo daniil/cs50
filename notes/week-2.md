@@ -117,3 +117,59 @@ int main (int argc, string argv[])
 
 By default `main` returns 0 if everything goes well, hence the `int main` definition.
 To exit from main, you can return a non-zero value, ie `return 1`.
+
+## Functions
+
+`return-type name(argument-list); // arguments are comma separated, each of which has a type and a name`
+
+Function declaration:
+
+`float mult_two_reals(float x, float y);`
+
+Function definition:
+
+```
+float mult_two_reals(float x, float y)
+{
+    return x * y;
+}
+```
+
+Functions can have no argument or no return:
+
+```
+int fn_name(void); // no arguments
+void fn_name(int a); // no return
+```
+
+## Arrays
+
+Array declaration:
+
+```
+type name[size];
+double menu_size[5];
+```
+
+You can set a value of element of an array that is higher than the bounds, but it's dangerous and can cause segmentation fault errors.
+
+Instantiation syntax:
+
+```
+bool truthtable[3] = { false, true, true };
+bool truthtable[] = { false, true, true }; // size can be ommitted
+```
+
+Multiple dimensions:
+
+```
+bool battleship[10][10];
+```
+
+You can not assign one array to another using the assignment operator. You need to copy the contents of one array into another.
+
+Arrays are passed by reference - the callee receives the actual array, not a copy of it. Most variables are passed by value.
+
+## Command-Line Arguments
+
+Everything in command-line is treated as a string, so for numbers we'll need to convert the string to an int or float.
