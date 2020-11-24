@@ -170,6 +170,8 @@ You can not assign one array to another using the assignment operator. You need 
 
 Arrays are passed by reference - the callee receives the actual array, not a copy of it. Most variables are passed by value.
 
-## Command-Line Arguments
+## Command-Line Arguments / Variables
 
 Everything in command-line is treated as a string, so for numbers we'll need to convert the string to an int or float.
+
+There are two scopes: local and global. Local scope variables are passed by value, not mutating the original variable passed in from callee, but creating a local copy.
