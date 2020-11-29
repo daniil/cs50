@@ -32,7 +32,7 @@ void record_preferences(int ranks[]);
 void add_pairs(void);
 void sort_pairs(void);
 void lock_pairs(void);
-bool check_cycle(int winner, int loser);
+bool check_cycle(int cycle_end, int cycle_start);
 void print_winner(void);
 
 int main(int argc, string argv[])
@@ -177,7 +177,7 @@ void sort_pairs(void)
         }
         // insert key pair at the end of sorted items
         pairs[j + 1] = key_pair;
-      }
+    }
     return;
 }
 
@@ -186,56 +186,60 @@ void lock_pairs(void)
 {
     for (int i = 0; i < pair_count; i++)
     {
-        if (!check_cycle(pairs[i].winner, pairs[i].loser))
+        if (!check_cycle(pairs[i].loser, pairs[i].winner))
         {
             locked[pairs[i].winner][pairs[i].loser] = true;
         }
-
-        // printf("%i : %i (%i) \n", pairs[i].winner, pairs[i].loser, preferences[pairs[i].winner][pairs[i].loser]);
     }
     return;
 }
 
-// Test if loser won over a person who beat the winner
-bool check_cycle(int winner, int loser)
+// Test if locked cases end in a cycle
+bool check_cycle(int cycle_end, int cycle_start)
 {
-    // check if anyone beat the winner
+    // return true if there is a cycle created (Recursion base case)
+    if (cycle_end == cycle_start)
+    {
+        return true;
+    }
+
+    // loop through candidates (Recursive case)
     for (int i = 0; i < candidate_count; i++)
     {
-        if (locked[i][winner] == true)
+        // if current loser won any votes check who they won over
+        if (locked[cycle_end][i])
         {
-            // check if the loser beat that candidate
-            if (locked[loser][i] == true)
+            // check if the cycle completes
+            if (check_cycle(i, cycle_start))
             {
                 return true;
             }
         }
     }
-
     return false;
 }
 
 // Print the winner of the election
 void print_winner(void)
 {
-    for (int i = 0; i < pair_count; i++)
+    for (int i = 0; i < candidate_count; i++)
     {
-        int winner = pairs[i].winner;
-        bool has_links = false;
+        // set count of locked to 0
+        int locked_false = 0;
 
-        // find a candidate that has no links pointed at
         for (int j = 0; j < candidate_count; j++)
         {
-            if (locked[i][winner])
+            // check if none of the candidates locked this candidate
+            if (locked[j][i] == false)
             {
-                has_links = true;
-            }
-        }
+                locked_false++;
 
-        if (!has_links)
-        {
-            printf("%s\n", candidates[winner]);
-            return;
+                // if no one locked, print that cnadidates name
+                if (locked_false == candidate_count)
+                {
+                    printf("%s\n", candidates[i]);
+                }
+            }
         }
     }
     return;
