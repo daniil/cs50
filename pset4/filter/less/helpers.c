@@ -1,14 +1,18 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdlib.h>
 #include "helpers.h"
 
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
 {
+    // each row
     for (int i = 0; i < height; i++)
     {
+        // each pixel
         for (int j = 0; j < width; j++)
         {
+            // for greyscale conversion set RGB values to be the same, and average of RGB of each pixel
             float avg_float = ((float) image[i][j].rgbtBlue + (float) image[i][j].rgbtGreen + (float) image[i][j].rgbtRed) / (float) 3;
             image[i][j].rgbtBlue = round(avg_float);
             image[i][j].rgbtGreen = round(avg_float);
@@ -21,18 +25,22 @@ void grayscale(int height, int width, RGBTRIPLE image[height][width])
 // Convert image to sepia
 void sepia(int height, int width, RGBTRIPLE image[height][width])
 {
+    // each row
     for (int i = 0; i < height; i++)
     {
+        // each pixel
         for (int j = 0; j < width; j++)
         {
             float original_red = (float) image[i][j].rgbtRed;
             float original_green = (float) image[i][j].rgbtGreen;
             float original_blue = (float) image[i][j].rgbtBlue;
 
+            // apply a sepia formula to each color byte
             float sepia_red = fmin(.393 * original_red + .769 * original_green + .189 * original_blue, 255.00);
             float sepia_green = fmin(.349 * original_red + .686 * original_green + .168 * original_blue, 255.00);
             float sepia_blue = fmin(.272 * original_red + .534 * original_green + .131 * original_blue, 255.00);
 
+            // set new values for each color byte
             image[i][j].rgbtBlue = round(sepia_blue);
             image[i][j].rgbtGreen = round(sepia_green);
             image[i][j].rgbtRed = round(sepia_red);
@@ -44,6 +52,26 @@ void sepia(int height, int width, RGBTRIPLE image[height][width])
 // Reflect image horizontally
 void reflect(int height, int width, RGBTRIPLE image[height][width])
 {
+    for (int i = 0; i < height; i++)
+    {
+        // allocate heap memory for each row
+        RGBTRIPLE *flippedRow = malloc(width * sizeof(RGBTRIPLE));
+
+        // add flipped pixels to flippedRow
+        for (int j = 0; j < width; j++)
+        {
+            flippedRow[j] = image[i][width - j - 1];
+        }
+
+        // set original image pixels to their flippedRow poistions
+        for (int j = 0; j < width; j++)
+        {
+            image[i][j] = flippedRow[j];
+        }
+
+        // free allocated heap memory
+        free(flippedRow);
+    }
     return;
 }
 
