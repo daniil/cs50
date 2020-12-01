@@ -16,8 +16,8 @@ Using power of 16
 ```
 
 ```
-16 1
- 0 0
+256 16 1
+  0  0 0
 ```
 
 It can be converted to decimal or other system.
@@ -29,16 +29,47 @@ RGB is represented in hexadecimal.
 FF FF FF // white
 ```
 
-Often represented as `0x0, 0x1, 0xF, etc`
+Often represented as `0x0, 0x1, 0xF, etc`.
+
+Binary can easily be converted into hexadecimal. Each binary group of 4 will correspond to hexadecimal digit.
+
+Memory addresses in our system are represented in hexadecimal in C.
+
+## Pointers
+
+```
+int *p;
+```
+
+Pointers are just addresses to location in memory where variables live.
+
+- value is a memory address
+- type describes the data located at that memory address
+
+The simplest pointer available is the `NULL` pointer. If you don't set pointer's value immediately, you should set pointer value to `NULL`.
+
+Another way to create a pointer is to simply extract the address of an existing variable using address extraction operator - `&`.
+
+The name of the array is actually a pointer to the first element of that array. That's why passing arrays as arguments works as passing by reference, not value.
+
+### Dereferencing
+
+Main purpose of a pointer is to allow us to modify or inspect the location to which it points.
+
+If we have a pointer-to-char called `pc`, then `*pc` is the data that lives at the memory address stored inside the variable `pc`.
+
+`*` can be used as a *dereference operator*. It goes to the reference and accesses the data at that memory location, allowing you to manipulate it.
+
+If you try to dereference a pointer whose value is `NULL` you will get a _Segmentation fault_, but that's a better behaviour than accidental manipulation of unknown pointers.
 
 ## Address
 
 ```
 & - AddressOf Operator
-printf("%p\n", &n); // pointer and an address, displayed in hexadecimal;
+printf("%p\n", &n); // pointer and an address, displayed in hexadecimal
 
 * - Go to an address
-printf("%i\n", *&n); // getting an address and go to it
+printf("%i\n", *&n); // getting an address and going to it
 ```
 
 Storing the address of the value:
@@ -46,7 +77,7 @@ Storing the address of the value:
 ```
 int n = 50;
 int *p = &n; // pointer data, address of an int
-printf("%i\n", *p);
+printf("%i\n", *p); // this will print out the address of that variable
 ```
 
 ## Strings
@@ -59,7 +90,7 @@ char *s = "EMMA";
 // From cs50.h
 typedef char *string; // create a data type called string that points to a first character of character set
 
-// This would print the same
+// This would print the same, the address of first character of the string
 printf("%p\n", s);
 printf("%p\n", &s[0]);
 ```
@@ -79,22 +110,54 @@ for (int = 0, n = strlen(s); i < n + 1; i++)
 strcpy(t, s);
 ```
 
-## Memory alloc
+## Memory Allocation
 
-Returns back the address of allocated memory. You need to explicitly free up the memory to avoid memory leaks.
+Allocate memory (in bytes) and return back the pointer of allocated memory. You need to explicitly free up the memory to avoid memory leaks.
 
-Use `free(ponter_name);` to free up the memory.
+```
+// statically obtain an integer
+int x;
 
-You can use `valgrind` to test for memory leaks
+// dynamically obtain an integer
+int *px = malloc(sizeof(int));
+```
+
+```
+// get an integer from the user
+int x = GetInt();
+
+// array of floats on the stack
+float stack_array[x];
+
+// array of floats on the heap
+float *heap_array = malloc(x * sizeof(float));
+```
+
+Use `free(pointer_name);` to free up the memory. Don't free up static memory and don't free up anything more than once.
+
+You can use `valgrind` to test for memory leaks.
 
 `sizeof` returns the size in bytes of a data type
+
+### Data types space
+
+```
+Data Type   Size (in bytes)
+
+int         4
+char        1
+float       4
+double      8
+long long   8
+char*       4 or 8
+```
 
 ## Memory Storage
 
 - machine code
 - globals
-- heap (malloc)
-- stack (local variables in functions)
+- vvv - heap (malloc)
+- ^^^ - stack (local variables in functions)
 
 ## Swap variables
 
@@ -131,7 +194,73 @@ int main(void)
 }
 ```
 
-## Opening files
+## File Pointers
+
+- `fopen()`
+    - Opens a file and returns a file pointer to it.
+    - Always check the return value to make sure you don't get back `NULL`.
+    - `FILE *ptr1 = fopen("file1.text", "r");`
+- `fclose()`
+    - Closes the file pointed to by the given file pointer
+    - `fclose(ptr1);`
+- `fgetc()`
+    - Reads and returns the next character from the file pointed to.
+    - The operation of the file pointer passed in as a parameter must be "r" for read.
+    - `char ch = fgetc(ptr1);`
+- `fputc()`
+    - Writes or appends the specified character to the pointed-to file.
+    - The operation of the file pointer passed in as a parameter must be "w" for write or "a" for append.
+    - `fputc('A', ptr1);`
+- `fread()`
+    - Reads <qty> units of size <size> from the file pointed to and stores them in memory in a buffer (usually an array) pointed to by <buffer>.
+    - The operation of the file pointer passed in as a parameter must be "r" for read.
+    - `fread(<buffer>, <size>, <qty>, <file pointer>);`
+- `fwrite()`
+    - Writes <qty> units of size <size> to the file pointed to by reading them from a buffer (usually an array) pointed to by <buffer>.
+    - The operation of the file pointer passed in as a parameter must be "w" for write or "a" for append.
+    - `fwrite(<buffer>, <size>, <qty>, <file pointer>);`
+
+### Linux cp command
+
+```
+char ch;
+while ((ch = fgetc(ptr)) != EOF)
+    fputc(ch, ptr2);
+```
+
+### `fread` example
+
+```
+// Stack
+int arr[10];
+fread(arr, sizeof(int), 10, ptr);
+
+// Heap
+double *arr2 = malloc(sizeof(double) * 80);
+fread(arr2, sizeof(double), 80, ptr);
+
+// Single char
+char c;
+fread(&c, sizeof(char), 1, ptr);
+```
+
+### `fwrite` example
+
+```
+// Stack
+int arr[10];
+fwrite(arr, sizeof(int), 10, ptr);
+
+// Heap
+double *arr2 = malloc(sizeof(double) * 80);
+fwrite(arr2, sizeof(double), 80, ptr);
+
+// Single char
+char c;
+fwrite(&c, sizeof(char), 1, ptr);
+```
+
+### Opening files
 
 ```
 FILE *file = fopen("phonebook.csv", "a"); // r = read, w = write, a = append
@@ -146,10 +275,10 @@ fprintf(file, "%s, %s\n", name, number);
 fclose(file);
 ```
 
-## Checking if file is a jpeg
+### Checking if file is a jpeg
 
 ```
-@include <stdio.h>
+#include <stdio.h>
 
 int main(int argc, char *argv[])
 {
@@ -160,7 +289,7 @@ int main(int argc, char *argv[])
     }
 
     // Open file
-    FILE *file = fope(argv[1], "r");
+    FILE *file = fopen(argv[1], "r"); // read
     if (file == NULL)
     {
         return 1;
