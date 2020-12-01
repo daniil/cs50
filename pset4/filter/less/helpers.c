@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+
 #include "helpers.h"
+
+RGBTRIPLE blur_pixel(int height, int width, RGBTRIPLE image[height][width], int row, int col);
 
 // Convert image to grayscale
 void grayscale(int height, int width, RGBTRIPLE image[height][width])
@@ -63,7 +66,7 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
             flippedRow[j] = image[i][width - j - 1];
         }
 
-        // set original image pixels to their flippedRow poistions
+        // set original image pixels to their flippedRow positions
         for (int j = 0; j < width; j++)
         {
             image[i][j] = flippedRow[j];
@@ -78,5 +81,70 @@ void reflect(int height, int width, RGBTRIPLE image[height][width])
 // Blur image
 void blur(int height, int width, RGBTRIPLE image[height][width])
 {
+    // allocate heap memory for blurred_pixels 2d array
+    RGBTRIPLE(*blurred_pixels)[width] = calloc(height, width * sizeof(RGBTRIPLE));
+
+    // each row
+    for (int i = 0; i < height; i++)
+    {
+        // each pixel
+        for (int j = 0; j < width; j++)
+        {
+            // generate blurred pixels bases on original color values
+            blurred_pixels[i][j] = blur_pixel(height, width, image, i, j);
+        }
+    }
+
+    // iterate over blurred pixels and update original image values with blurred values
+    for (int i = 0; i < height; i++)
+    {
+        for (int j = 0; j < width; j++)
+        {
+            image[i][j] = blurred_pixels[i][j];
+        }
+    }
+
+    // free allocated heap memory
+    free(blurred_pixels);
+
     return;
+}
+
+RGBTRIPLE blur_pixel(int height, int width, RGBTRIPLE image[height][width], int row, int col)
+{
+    int val_count = 0;
+
+    float red_sum = 0;
+    float green_sum = 0;
+    float blue_sum = 0;
+
+    // go over the 3x3 grid of the pixels, surrounding the current pixel
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            // pick a current row and col of the grid
+            int curr_row = row + (i - 1);
+            int curr_col = col + (j - 1);
+
+            // account for edges of rows and cols, first/last
+            if (curr_row >= 0 && curr_col >= 0 && curr_row < height && curr_col < width)
+            {
+                red_sum += (float) image[curr_row][curr_col].rgbtRed;
+                green_sum += (float) image[curr_row][curr_col].rgbtGreen;
+                blue_sum += (float) image[curr_row][curr_col].rgbtBlue;
+
+                val_count++;
+            }
+        }
+    }
+
+    // create a pixel struct and calculate the average for the pixel
+    RGBTRIPLE new_pixel;
+
+    new_pixel.rgbtBlue = round(blue_sum / (float) val_count);
+    new_pixel.rgbtGreen = round(green_sum / (float) val_count);
+    new_pixel.rgbtRed = round(red_sum / (float) val_count);
+
+    return new_pixel;
 }
