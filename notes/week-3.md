@@ -6,23 +6,19 @@
 
 `O` is the worst cases, upper bound
 
-```
-*O(n^2)* - eg. bubble sort, selection sort, insertion sort
-*O(n log n)* - eg. merge sort
-*O(n)* - eg. linear search
-*O(log n)* - eg. binary search
-*O(1)*
-```
+- *O(n^2)* - eg. bubble sort, selection sort, insertion sort
+- *O(n log n)* - eg. merge sort
+- *O(n)* - eg. linear search
+- *O(log n)* - eg. binary search
+- *O(1)*
 
 `Ω` is the best case, lower bound, same notation as `O` but with `Ω`
 
-```
-*Ω(n^2)* - eg. selection sort
-*Ω(n log n)* - eg. merge sort
-*Ω(n)* - eg. bubble sort, insertion sort
-*Ω(log n)*
-*Ω(1)* - eg. linear search and binary search
-```
+- *Ω(n^2)* - eg. selection sort
+- *Ω(n log n)* - eg. merge sort
+- *Ω(n)* - eg. bubble sort, insertion sort
+- *Ω(log n)*
+- *Ω(1)* - eg. linear search and binary search
 
 ### Calculating O notation
 
