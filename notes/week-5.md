@@ -1,6 +1,7 @@
 ## Memory Allocation Review
 
 A pointer is an address in memory and an array is just a chunk of memory. We can use it interchangeably in certain contexts.
+
 If you use a square bracket next to a pointer it will point to the correct address in memory.
 
 ```
@@ -79,21 +80,22 @@ while (tmp->next != NULL)
 ```
 
 The benefit of linked list is ability to do dynamic insertion.
+
 Linked list come at a cost of losing the random access (ie: square bracket / index syntax).
 
-Running time of linked list
+### Running time of linked list
 
 ```
 O(n) - search, insert
 ```
 
-Linked list `for` loop
+### Linked list `for` loop
 
 ```
 for (node *tmp = list; tmp != NULL; tmp = tmp->next)
 ```
 
-Freeing a linked list
+### Freeing a linked list
 
 ```
 while (list != NULL)
@@ -119,7 +121,9 @@ node;
 ```
 
 First top node is called a root node.
+
 This data structure gains us back the ability to do binary search, because by definition left node is always smaller than the right node.
+
 Trees are recursive data structures.
 
 ```
@@ -180,15 +184,15 @@ It's essentially an array of arrays, one for each character of a string for exam
 
 ### Queues
 
-FIFO - first in, first out.
-enqueue means to get in line.
-dequeue means to get out of line.
+- FIFO - first in, first out.
+- enqueue means to get in line.
+- dequeue means to get out of line.
 
 ### Stacks
 
-LIFO - last in, first out.
-push - to add to stack.
-pop - to remove from stack.
+- LIFO - last in, first out.
+- push - to add to stack.
+- pop - to remove from stack.
 
 ### Dictionaries
 

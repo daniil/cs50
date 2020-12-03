@@ -6,19 +6,23 @@
 
 `O` is the worst cases, upper bound
 
+```
 *O(n^2)* - eg. bubble sort, selection sort, insertion sort
 *O(n log n)* - eg. merge sort
 *O(n)* - eg. linear search
 *O(log n)* - eg. binary search
 *O(1)*
+```
 
 `Ω` is the best case, lower bound, same notation as `O` but with `Ω`
 
+```
 *Ω(n^2)* - eg. selection sort
 *Ω(n log n)* - eg. merge sort
 *Ω(n)* - eg. bubble sort, insertion sort
 *Ω(log n)*
 *Ω(1)* - eg. linear search and binary search
+```
 
 ### Calculating O notation
 
@@ -43,6 +47,7 @@ Return false
 ## Binary search
 
 Divide and conquer. Starting at the middle and seeing if the value is less or more than the current one and pick next half to search for.
+
 Only works for sorted arrays.
 
 ```
@@ -71,10 +76,12 @@ Repeat until the swap counter is 0:
             Add one to the swap counter
 ```
 
+```
 (n - 1) x (n - 2)
 n^2 - 2n - 1n + 2
 n^2 - 3n + 2
 O(n^2)
+```
 
 Binary search is better only for sorted arrays, but sorting is more expensive. If you are doing a lot of searching though it makes sense to sort first.
 
@@ -88,9 +95,11 @@ For i from 0 to n-1
     Swap smallest item with i'th item
 ```
 
+```
 n(n + 1) / 2
 ...
 O(n^2)
+```
 
 ## Insertion Sort
 
