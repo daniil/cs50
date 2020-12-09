@@ -1,8 +1,7 @@
-
 ## General Python rules
 
 - no semicolons, but indentation matters
-- no explicit data types
+- no explicit data types, but declared by initialization only
 - there is no upper bounds to an int, no overflow problems
 
 ## Getting user input and printing it
@@ -25,6 +24,12 @@ counter += 1
 
 No `counter++` however
 
+## Operators
+
+`||` is `or`
+`&&` is `and`
+`!` is `not`
+
 ## If, if/else statements
 
 ```
@@ -46,6 +51,8 @@ i = 3
 while i > 0:
     print("cough")
     i -= 1
+
+# there is no "do/while" loop
 ```
 
 ```
@@ -54,6 +61,9 @@ for i in [0, 1, 2]:
 
 for i in range(3):
     print("cough")
+
+for x in range(0, 100, 2): # additional range params
+    print(x)
 ```
 
 ## Data Types
@@ -68,6 +78,117 @@ for i in range(3):
 - dict - collection of key/value pairs
 - set - collection of unique values
 
+## Lists
+
+```
+scores = []
+scores.append(72)
+scores.append(73)
+scores.append(33)
+
+# or
+scores = [72, 73, 33]
+
+# or
+scores = list()
+
+print(f"Average: ${sum(scores) / len(scores)}")
+
+# list comprehension
+nums = [x for x in range(500)]
+```
+
+### List Methods
+
+```
+nums = [1, 2, 3, 4]
+nums.append(5) # add to the end
+nums.insert(4, 5) # insert at specific position
+nums[len(nums):] = [5] # splicing list into another list
+```
+
+## Tuples
+
+```
+# list of tuples
+presidents = [
+    ("George Washington", 1789),
+    ("John Adams", 1797),
+    ("Thomas Jefferson", 1801),
+    ("James Madison", 1809)
+]
+
+# iterating over tuples
+for prez, year in presidents:
+    print("In {1}, {0} took office".format(prez, year))
+```
+
+## Dictionaries
+
+```
+from sys import exit
+
+people = {
+    "EMMA": "617-555-0100",
+    "RODRIGO": "617-555-0101",
+    "BRIAN": "617-555-0102",
+    "DAVID": "617-555-0103"
+}
+
+# setting new value
+people["CRAIG"] = "617-555-0104"
+
+if "EMMA" in people:
+    print(f"Found {people['DAVID']}")
+    exit(0)
+exit(1)
+
+# iterating over keys
+for person in people:
+    print(person)
+
+# iterating over keys and values (does not guarantee the order)
+for person, phone in people.items():
+    print("{}'s phone number is {}".format(person, phone))
+```
+
+## Functions
+
+```
+# using a main function
+if __name__ == "__main__":
+    main()
+```
+
+### Definition
+
+```
+def square(x):
+    return x ** 2 # exponentiation operator
+```
+
+## Objects
+
+```
+class Student():
+
+    def __init__(self, name, id):
+        self.name = name
+        self.id = id
+
+    def changeID(self, id):
+        self.id = id
+
+    def print(self):
+        print("{} - {}".format(self.name, self.id))
+
+# using objects
+jane = Student("Jane", 10)
+jane.print()
+jane.changeID(11)
+jane.print()
+```
+
 ## Examples
 
 ### Blur Filter
@@ -80,7 +201,7 @@ after = before.filter(ImageFilter.BLUR)
 after.save("out.bmp")
 ```
 
-### Dictionary
+### Spell Check
 
 ```
 words = set()
@@ -165,20 +286,6 @@ age = int(input("What's your age?\n"))
 print(f"You are at least ${age * 365} days old")
 ```
 
-### Lists
-
-```
-scores = []
-scores.append(72)
-scores.append(73)
-scores.append(33)
-
-# or
-scores = [72, 73, 33]
-
-print(f"Average: ${sum(scores) / len(scores)}")
-```
-
 ### Iterating Over Characters
 
 ```
@@ -223,24 +330,6 @@ print("Not found")
 exit(1)
 ```
 
-### Dictionary
-
-```
-from sys import exit
-
-people = {
-    "EMMA": "617-555-0100",
-    "RODRIGO": "617-555-0101",
-    "BRIAN": "617-555-0102",
-    "DAVID": "617-555-0103"
-}
-
-if "EMMA" in people:
-    print(f"Found {people['DAVID']}")
-    exit(0)
-exit(1)
-```
-
 ### Comparing Strings
 
 ```
@@ -268,11 +357,6 @@ with open("phonebook.csv", "a"): # you don't have to close the file manually
     writer = csv.writer(file)
     writer.writerow((name, number)) # takes a tuple
 ```
-
-## Operators
-
-`||` is `or`
-`&&` is `and`
 
 ## Regular Expressions
 
