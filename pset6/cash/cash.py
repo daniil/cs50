@@ -1,3 +1,4 @@
+# Refactor of pset1/cash
 from cs50 import get_float
 
 
@@ -27,7 +28,7 @@ def coins_num(change):
             cents -= 5
         else:
             cents -= 1
-        
+
         coin_count += 1
 
     return coin_count

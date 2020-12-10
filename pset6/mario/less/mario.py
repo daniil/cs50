@@ -1,3 +1,4 @@
+# Refactor of pset1/mario/less
 from cs50 import get_int
 
 
