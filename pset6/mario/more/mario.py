@@ -22,6 +22,9 @@ def print_pyramid(cols):
         print(" " * 2, end="")
         print("#" * i)
 
+        # one liner
+        # print("{}{}  {}".format(" " * (cols - i), "#" * i, "#" * i))
+
 
 if __name__ == "__main__":
     main()
