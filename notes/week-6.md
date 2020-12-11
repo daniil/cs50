@@ -353,7 +353,7 @@ from cs50 import get_string
 name = get_string("Name: ")
 number = get_string("Number: ")
 
-with open("phonebook.csv", "a"): # you don't have to close the file manually
+with open("phonebook.csv", "a") as file: # you don't have to close the file manually
     writer = csv.writer(file)
     writer.writerow((name, number)) # takes a tuple
 ```
