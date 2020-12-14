@@ -32,9 +32,7 @@ sqlite3 filename.db
 .schema
 ```
 
-## SQL
-
-### Data Types
+### Data Types (in SQLite)
 
 - BLOB (binary large object)
 - INTEGER
@@ -52,9 +50,49 @@ sqlite3 filename.db
     - real
     - double precision
 - TEXT
-    - char(n)
+    - char(n) - fixed length string
     - varchar(n)
     - text
+
+### Other Data Types
+
+- ENUM (string object with a value chosen from a list of permitted values)
+
+## SQL Queries
+
+### INSERT
+
+```
+INSERT INTO <table> (<columns>) VALUES (<values>);
+```
+
+### SELECT
+
+```
+SELECT <columns> FROM <table> WHERE <predicate> ORDER BY <column>;
+```
+
+### SELECT (JOIN)
+
+```
+SELECT <columns> FROM <table1> JOIN <table2> ON <predicate>;
+
+SELECT users.fullname, moms.mother FROM users JOIN moms ON users.username = moms.username;
+```
+
+### UPDATE
+
+```
+UPDATE <table> SET <column> = <value> WHERE <predicate>;
+```
+
+### DELETE
+
+```
+DELETE FROM <table> WHERE <predicate>;
+```
+
+## Examples
 
 ### Connection and DB Creation/Insertion
 
