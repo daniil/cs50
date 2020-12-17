@@ -1,6 +1,6 @@
-HTML page is modeled as a tree structure. All nested elements are represented as nodes of that tree. This model is referred to as Document Object Model.
+HTML page is modeled as a tree structure. All nested elements are represented as nodes of that tree, where each nested element is a child of a node in the tree. This model is referred to as Document Object Model.
 
-JS allows us to manipulate DOM, extract, update and replace parts of our page.
+JS allows us to manipulate DOM, extract, update and replace parts of our page without refreshing.
 
 One of the ways to output the information in a browser is by using an `alert` function.
 
@@ -9,6 +9,8 @@ If you want to reference an HTML element in JS, you need to give it a particular
 We can then use `document.querySelector` function to select the element.
 
 But this selects an element itself so for elements such as form inputs, what we are likely more interested in is getting it's `.value` attribute.
+
+We can add a form and have form call a function when it is submitted, but because forms have default behaviour of sending the data to it's action attribute, we need to stop it with `<form onsubmit="handleSubmit(); return false;">`
 
 Just like we can read the information from the DOM, we can update DOM as well using JS.
 
@@ -28,7 +30,7 @@ If you are accessing DOM elements with JS you have to be careful to not try to s
 
 There are multiple other events that we can listen for and handle using event handler functions. The event listeners need to be attached to a specific HTML element.
 
-We can access the element that triggered the event handler by using `this` keyword.
+We can access the element that triggered the event handler by using `this` keyword. We can think of `this` as a special variable that contains some kind of context for how a function is called.
 
 If you want to run a function every number of milliseconds you can use `setInterval` function, that takes a function to run and time in milliseconds of how often you want to run it.
 
