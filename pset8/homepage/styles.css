@@ -1,0 +1,112 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  padding: 1rem 2rem;
+}
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid #a4ebfa;
+  text-align: center;
+}
+
+section {
+  margin-top: 2rem;
+}
+
+h1 {
+  margin-bottom: 1rem;
+}
+
+.home-page {
+  display: flex;
+  justify-content: center;
+}
+
+.main-nav {
+  display: flex;
+  list-style-type: none;
+  padding-left: 0;
+  background-color: antiquewhite;
+  border-radius: 6px;
+  padding: 1rem 2rem;
+  font-size: 1.5rem;
+}
+
+.main-nav > li {
+  margin-right: 1rem;
+}
+
+.cat-pic {
+  position: relative;
+  max-width: 75%;
+}
+
+.js-cat-img {
+  max-width: 100%;
+}
+
+.js-cat-fact {
+  width: 75%;
+  margin: 2rem auto;
+  padding: 1rem;
+  border-top: 3px solid thistle;
+  border-bottom: 3px solid thistle;
+  text-align: center;
+  font-size: 3rem;
+  color:thistle;
+}
+
+.js-cat-name {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 1rem;
+  color: salmon;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.daniil-quote {
+  position: relative;
+  width: 75%;
+  margin: 0 auto;
+}
+
+.fancy-quote {
+  position: absolute;
+  font-size: 5rem;
+  color: #d21288;
+}
+
+.fancy-quote--right {
+  right: 0;
+  bottom: -2.25rem;
+}
+
+.about-quote {
+  font-size: 1.5rem;
+  padding: 2rem 5rem;
+}
+
+.js-form-result {
+  display: none;
+  margin-top: 2rem;
+}
+
+.js-form-result.is-visible {
+  display: block;
+}
+
+.hobby-cards {
+  display: flex;
+  justify-content: space-between;
+}
+
+.hobby-cards > .card {
+  flex-basis: 24%;
+}

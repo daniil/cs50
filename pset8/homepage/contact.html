@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="styles.css" rel="stylesheet" />
+    <title>Daniil Awesome Page</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul class="main-nav">
+          <li>
+            <a href="index.html">🏡 Home</a>
+          </li>
+          <li>
+            <a href="about.html">☕️ About</a>
+          </li>
+          <li>
+            <a href="contact.html">📬 Contact</a>
+          </li>
+          <li>
+            <a href="hobbies.html">🎧 Hobbies</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <section>
+        <h1>Contact Daniil</h1>
+        <form class="js-contact-form">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control form-control-lg" id="email" placeholder="name@example.com">
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label">Lovely Message</label>
+            <textarea class="form-control form-control-lg" id="message" rows="3"></textarea>
+          </div>
+          <button type="submit" class="btn btn-lg btn-success">Success</button>
+        </form>
+        <div class="js-form-result">
+          <h2>Thank you for your submission!</h2>
+          <h3 class="js-form-result__email"><em>Email: </em><span class="value"></span></h3>
+          <h3 class="js-form-result__message"><em>Message: </em><span class="value"></span></h3>
+        </div>
+      </section>
+    </main>
+    <footer>
+      &copy; <span class="js-copy"></span> | Made with ♥️ for CS50
+    </footer>
+    <script src="script.js"></script>
+  </body>
+</html>
