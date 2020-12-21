@@ -43,7 +43,27 @@ if not os.environ.get("API_KEY"):
 @app.route("/")
 @login_required
 def index():
-    return render_template("index.html")
+    user_total = 0
+
+    # Get current user's cash balance
+    curr_cash = db.execute("SELECT cash FROM users WHERE id = :user_id",
+                           user_id=session["user_id"])
+
+    user_total += curr_cash[0]["cash"]
+
+    # Get current user's stocks
+    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol",
+                             user_id=session["user_id"])
+
+    # Lookup all stocks and fetch their latest information
+    for stock in user_stocks:
+        stock_lookup = lookup(stock["symbol"])
+        stock["symbol"] = stock_lookup["symbol"]
+        stock["name"] = stock_lookup["name"]
+        stock["price"] = stock_lookup["price"]
+        user_total += stock["total_shares"] * stock_lookup["price"]
+
+    return render_template("index.html", cash=curr_cash[0]["cash"], stocks=user_stocks, total=user_total)
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -79,7 +99,7 @@ def buy():
         # Update transactions table with user information
         insert_transaction = db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (:user_id, :symbol, :shares, :price)",
                                         user_id=session["user_id"],
-                                        symbol=request.form.get("symbol"),
+                                        symbol=result["symbol"],
                                         shares=int(request.form.get("shares")),
                                         price=result["price"])
 
