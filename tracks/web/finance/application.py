@@ -15,6 +15,7 @@ app = Flask(__name__)
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
+
 # Ensure responses aren't cached
 @app.after_request
 def after_request(response):
@@ -22,6 +23,7 @@ def after_request(response):
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
+
 
 # Custom filter
 app.jinja_env.filters["usd"] = usd
@@ -178,6 +180,44 @@ def logout():
     return redirect("/")
 
 
+@app.route("/profile", methods=["GET", "POST"])
+@login_required
+def profile():
+    if request.method == "POST":
+        if not request.form.get("curr_password"):
+            return apology("must enter current password", 400)
+        if not request.form.get("new_password"):
+            return apology("must enter new password", 400)
+        if not request.form.get("new_confirmation"):
+            return apology("must enter new password confirmation", 400)
+        if not request.form.get("new_password") == request.form.get("new_confirmation"):
+            return apology("new password and confimation need to match", 400)
+
+        # Check current user password
+        hash = db.execute("SELECT hash FROM users WHERE id = :user_id", user_id=session["user_id"])
+
+        if not check_password_hash(hash[0]["hash"], request.form.get("curr_password")):
+            return apology("current password is incorrect")
+
+        # Update current user password
+        update_password = db.execute("UPDATE users SET hash = :password_hash WHERE id = :user_id",
+                                     user_id=session["user_id"],
+                                     password_hash=generate_password_hash(request.form.get("new_password")))
+
+        if not update_password:
+            return apology("can't update the password")
+
+        flash("Password updated successfully")
+        return redirect("/profile")
+
+    # Render Profile page ("GET")
+    else:
+        user = db.execute("SELECT username FROM users WHERE id = :user_id",
+                          user_id=session["user_id"])
+
+        return render_template("profile.html", user=user[0])
+
+
 @app.route("/quote", methods=["GET", "POST"])
 @login_required
 def quote():
@@ -225,8 +265,8 @@ def register():
 
         # Login the user and redirect to home page
         if new_user:
-           session["user_id"] = new_user
-           return redirect("/")
+            session["user_id"] = new_user
+            return redirect("/")
 
     # Render Register page ("GET")
     else:
@@ -236,7 +276,11 @@ def register():
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
-    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol HAVING SUM(shares) > 0",
+    user_stocks = db.execute("""SELECT symbol, SUM(shares) AS total_shares
+                                FROM transactions
+                                WHERE user_id = :user_id
+                                GROUP BY symbol
+                                HAVING SUM(shares) > 0""",
                              user_id=session["user_id"])
 
     if request.method == "POST":
@@ -267,7 +311,8 @@ def sell():
                                          user_id=session["user_id"])
 
                 # Update transactions table with user information
-                insert_transaction = db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (:user_id, :symbol, :shares, :price)",
+                insert_transaction = db.execute("""INSERT INTO transactions (user_id, symbol, shares, price)
+                                                   VALUES (:user_id, :symbol, :shares, :price)""",
                                                 user_id=session["user_id"],
                                                 symbol=stock_lookup["symbol"],
                                                 shares=-int(request.form.get("shares")),

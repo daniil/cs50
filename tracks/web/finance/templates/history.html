@@ -6,7 +6,7 @@
 
 {% block main %}
     <div class="form-group">
-        <label for="symbol">Filter: </label>
+        <label for="symbol">Filter </label>
         <select class="form-control js-symbol-select" name="symbol" required>
             <option selected="" value="">All</option>
             {% for symbol in symbols %}
@@ -37,18 +37,18 @@
 {% endblock %}
 
 {% block javascript %}
-let symbolSelect = document.querySelector('.js-symbol-select');
-let transactionRows = document.querySelectorAll('.js-transaction');
-symbolSelect.addEventListener('change', e => {
-    let symbolVal = e.target.value;
+    let symbolSelect = document.querySelector('.js-symbol-select');
+    let transactionRows = document.querySelectorAll('.js-transaction');
+    symbolSelect.addEventListener('change', e => {
+        let symbolVal = e.target.value;
 
-    transactionRows.forEach(row => row.classList.remove("is-hidden"));
+        transactionRows.forEach(row => row.classList.remove("is-hidden"));
 
-    if (symbolVal !== '') {
-        transactionRows.forEach(row => {
-            if (row.querySelector('.js-symbol').innerText !== symbolVal)
-                row.classList.add("is-hidden");
-        });
-    }
-});
+        if (symbolVal !== '') {
+            transactionRows.forEach(row => {
+                if (row.querySelector('.js-symbol').innerText !== symbolVal)
+                    row.classList.add("is-hidden");
+            });
+        }
+    });
 {% endblock %}
