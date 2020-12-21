@@ -52,7 +52,7 @@ def index():
     user_total += curr_cash[0]["cash"]
 
     # Get current user's stocks
-    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol",
+    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol HAVING SUM(shares) > 0",
                              user_id=session["user_id"])
 
     # Lookup all stocks and fetch their latest information
@@ -78,37 +78,38 @@ def buy():
             return apology("must enter valid number of shares", 400)
 
         # Lookup the stock
-        result = lookup(request.form.get("symbol"))
+        stock_lookup = lookup(request.form.get("symbol"))
 
         # If non-existant stock, render apology
-        if not result:
+        if not stock_lookup:
             return apology("invalid symbol", 400)
 
         # Check user cash to see if they can afford current shares of stock
         cash_val = db.execute("SELECT cash FROM users WHERE id = :user_id",
                               user_id=session["user_id"])
 
-        if cash_val[0]["cash"] < result["price"] * int(request.form.get("shares")):
+        if cash_val[0]["cash"] < stock_lookup["price"] * int(request.form.get("shares")):
             return apology("can't afford", 400)
 
         # Update users table cash column
         update_cash = db.execute("UPDATE users SET cash = :new_cash_val WHERE id = :user_id",
-                                 new_cash_val=cash_val[0]["cash"] - result["price"] * int(request.form.get("shares")),
+                                 new_cash_val=cash_val[0]["cash"] - stock_lookup["price"] * int(request.form.get("shares")),
                                  user_id=session["user_id"])
 
         # Update transactions table with user information
         insert_transaction = db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (:user_id, :symbol, :shares, :price)",
                                         user_id=session["user_id"],
-                                        symbol=result["symbol"],
+                                        symbol=stock_lookup["symbol"],
                                         shares=int(request.form.get("shares")),
-                                        price=result["price"])
+                                        price=stock_lookup["price"])
 
         if not update_cash or not insert_transaction:
             return apology("couldn't purchase", 400)
 
-        flash(f"Bought {request.form.get('shares')} shares of {result['name']} for ${result['price']}")
+        flash(f"Bought {request.form.get('shares')} shares of {stock_lookup['name']} for ${stock_lookup['price']}")
         return redirect("/")
 
+    # Render Buy page ("GET")
     else:
         return render_template("buy.html")
 
@@ -176,13 +177,13 @@ def quote():
             return apology("must provide symbol", 400)
 
         # Lookup the stock
-        result = lookup(request.form.get("symbol"))
+        stock_lookup = lookup(request.form.get("symbol"))
 
         # If non-existant stock, render apology
-        if not result:
+        if not stock_lookup:
             return apology("invalid symbol", 400)
 
-        return render_template("quoted.html", quote=result)
+        return render_template("quoted.html", quote=stock_lookup)
 
     # Render Quote page ("GET")
     else:
@@ -226,8 +227,55 @@ def register():
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
-    """Sell shares of stock"""
-    return apology("TODO")
+    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol",
+                             user_id=session["user_id"])
+
+    if request.method == "POST":
+        if not request.form.get("symbol"):
+            return apology("select stock to sell", 400)
+        if not request.form.get("shares"):
+            return apology("must provide number of shares", 400)
+        if int(request.form.get("shares")) < 1:
+            return apology("must enter valid number of shares", 400)
+
+        # Check how many shares of stock user has
+        for stock in user_stocks:
+            if stock["symbol"] == request.form.get("symbol"):
+                # If user requested too many shares send apology
+                if stock["total_shares"] < int(request.form.get("shares")):
+                    return apology("you don't own that many shares", 400)
+
+                # Lookup current stock price
+                stock_lookup = lookup(request.form.get("symbol"))
+
+                # Get current user cash
+                cash_val = db.execute("SELECT cash FROM users WHERE id = :user_id",
+                                      user_id=session["user_id"])
+
+                # Update users table cash column
+                update_cash = db.execute("UPDATE users SET cash = :new_cash_val WHERE id = :user_id",
+                                         new_cash_val=cash_val[0]["cash"] + stock_lookup["price"] * int(request.form.get("shares")),
+                                         user_id=session["user_id"])
+
+                # Update transactions table with user information
+                insert_transaction = db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (:user_id, :symbol, :shares, :price)",
+                                                user_id=session["user_id"],
+                                                symbol=stock_lookup["symbol"],
+                                                shares=-int(request.form.get("shares")),
+                                                price=stock_lookup["price"])
+
+                if not update_cash or not insert_transaction:
+                    return apology("couldn't purchase", 400)
+
+                flash(f"Sold {request.form.get('shares')} shares of {stock_lookup['name']} for ${stock_lookup['price']}")
+                return redirect("/")
+
+        # If stock is not found, return apology
+        return apology("you don't own this stock", 400)
+
+    # Render Sell page ("GET")
+    else:
+        return render_template("sell.html", stocks=user_stocks)
 
 
 def errorhandler(e):
