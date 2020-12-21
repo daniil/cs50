@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    History
+{% endblock %}
+
+{% block main %}
+    <div class="form-group">
+        <label for="symbol">Filter: </label>
+        <select class="form-control js-symbol-select" name="symbol" required>
+            <option selected="" value="">All</option>
+            {% for symbol in symbols %}
+                <option value="{{ symbol['symbol'] }}">{{ symbol["symbol"] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Symbol</th>
+                <th>Shares</th>
+                <th>Price</th>
+                <th>Transacted</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transactions %}
+                <tr class="js-transaction">
+                    <td class="js-symbol">{{ transaction["symbol"] }}</td>
+                    <td>{{ transaction["shares"] }}</td>
+                    <td>{{ transaction["price"] | usd }}</td>
+                    <td>{{ transaction["transaction_time"] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascript %}
+let symbolSelect = document.querySelector('.js-symbol-select');
+let transactionRows = document.querySelectorAll('.js-transaction');
+symbolSelect.addEventListener('change', e => {
+    let symbolVal = e.target.value;
+
+    transactionRows.forEach(row => row.classList.remove("is-hidden"));
+
+    if (symbolVal !== '') {
+        transactionRows.forEach(row => {
+            if (row.querySelector('.js-symbol').innerText !== symbolVal)
+                row.classList.add("is-hidden");
+        });
+    }
+});
+{% endblock %}

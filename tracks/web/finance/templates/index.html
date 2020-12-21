@@ -27,7 +27,9 @@
                     <td>{{ stock["symbol"] }}</td>
                     <td>{{ stock["name"] }}</td>
                     <td>{{ stock["total_shares"] }}</td>
-                    <td>{{ stock["price"] | usd }}</td>
+                    <td class="{{ 'text-success' if stock['price'] > stock['avg_price'] else 'text-danger' }}">
+                        {{ stock["price"] | usd }}
+                    </td>
                     <td>{{ (stock["price"] * stock["total_shares"]) | usd }}</td>
                 </tr>
             {% endfor %}

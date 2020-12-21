@@ -52,7 +52,11 @@ def index():
     user_total += curr_cash[0]["cash"]
 
     # Get current user's stocks
-    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol HAVING SUM(shares) > 0",
+    user_stocks = db.execute("""SELECT symbol, SUM(shares) AS total_shares, AVG(price) AS avg_price
+                                FROM transactions
+                                WHERE user_id = :user_id
+                                GROUP BY symbol
+                                HAVING SUM(shares) > 0""",
                              user_id=session["user_id"])
 
     # Lookup all stocks and fetch their latest information
@@ -117,8 +121,13 @@ def buy():
 @app.route("/history")
 @login_required
 def history():
-    """Show history of transactions"""
-    return apology("TODO")
+    transactions = db.execute("SELECT symbol, shares, price, transaction_time FROM transactions WHERE user_id = :user_id ORDER BY transaction_time DESC",
+                              user_id=session["user_id"])
+
+    symbols = db.execute("SELECT DISTINCT symbol FROM transactions WHERE user_id = :user_id ORDER BY symbol",
+                         user_id=session["user_id"])
+
+    return render_template("history.html", symbols=symbols, transactions=transactions)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -227,7 +236,7 @@ def register():
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
-    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol",
+    user_stocks = db.execute("SELECT symbol, SUM(shares) AS total_shares FROM transactions WHERE user_id = :user_id GROUP BY symbol HAVING SUM(shares) > 0",
                              user_id=session["user_id"])
 
     if request.method == "POST":

@@ -50,3 +50,8 @@ main table
 {
     text-align: left;
 }
+
+.is-hidden
+{
+    display: none;
+}
