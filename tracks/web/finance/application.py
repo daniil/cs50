@@ -184,31 +184,53 @@ def logout():
 @login_required
 def profile():
     if request.method == "POST":
-        if not request.form.get("curr_password"):
-            return apology("must enter current password", 400)
-        if not request.form.get("new_password"):
-            return apology("must enter new password", 400)
-        if not request.form.get("new_confirmation"):
-            return apology("must enter new password confirmation", 400)
-        if not request.form.get("new_password") == request.form.get("new_confirmation"):
-            return apology("new password and confimation need to match", 400)
 
-        # Check current user password
-        hash = db.execute("SELECT hash FROM users WHERE id = :user_id", user_id=session["user_id"])
+        # If user is changing the password
+        if request.form.get("action") == "password-change":
+            if not request.form.get("curr_password"):
+                return apology("must enter current password", 400)
+            if not request.form.get("new_password"):
+                return apology("must enter new password", 400)
+            if not request.form.get("new_confirmation"):
+                return apology("must enter new password confirmation", 400)
+            if not request.form.get("new_password") == request.form.get("new_confirmation"):
+                return apology("new password and confimation need to match", 400)
 
-        if not check_password_hash(hash[0]["hash"], request.form.get("curr_password")):
-            return apology("current password is incorrect")
+            # Check current user password
+            hash = db.execute("SELECT hash FROM users WHERE id = :user_id", user_id=session["user_id"])
 
-        # Update current user password
-        update_password = db.execute("UPDATE users SET hash = :password_hash WHERE id = :user_id",
-                                     user_id=session["user_id"],
-                                     password_hash=generate_password_hash(request.form.get("new_password")))
+            if not check_password_hash(hash[0]["hash"], request.form.get("curr_password")):
+                return apology("current password is incorrect")
 
-        if not update_password:
-            return apology("can't update the password")
+            # Update current user password
+            update_password = db.execute("UPDATE users SET hash = :password_hash WHERE id = :user_id",
+                                         user_id=session["user_id"],
+                                         password_hash=generate_password_hash(request.form.get("new_password")))
 
-        flash("Password updated successfully")
-        return redirect("/profile")
+            if not update_password:
+                return apology("can't update the password")
+
+            flash("Password updated successfully")
+            return redirect("/profile")
+
+        # If user is adding more cash to their profile
+        if request.form.get("action") == "cash-add":
+            if not request.form.get("cash"):
+                return apology("must enter the cash amount")
+
+            # Get current user cash amount
+            curr_cash = db.execute("SELECT cash FROM users WHERE id = :user_id", user_id=session["user_id"])
+
+            # Updates user cash
+            add_cash = db.execute("UPDATE users SET cash = :new_cash WHERE id = :user_id",
+                                  new_cash=curr_cash[0]["cash"] + float(request.form.get("cash")),
+                                  user_id=session["user_id"])
+
+            if not add_cash:
+                return apology("can't add cash")
+
+            flash(f"Funds have been added successfully (${request.form.get('cash')})")
+            return redirect("/")
 
     # Render Profile page ("GET")
     else:

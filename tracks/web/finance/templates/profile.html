@@ -6,6 +6,7 @@
 
 {% block main %}
     <form action="/profile" method="post">
+        <input type="hidden" name="action" value="password-change" />
         <div class="form-group">
             <h3>{{ user["username"] }}</h3>
         </div>
@@ -19,5 +20,14 @@
             <input class="form-control" name="new_confirmation" placeholder="New Password (confirm)" type="password" required>
         </div>
         <button class="btn btn-primary" type="submit">Update Password</button>
+    </form>
+    <hr />
+    <form action="/profile" method="post">
+        <input type="hidden" name="action" value="cash-add" />
+        <h4>Add More Cash</h4>
+        <div class="form-group">
+            <input class="form-control" name="cash" placeholder="Amount" type="number" step="0.01" min="0" required />
+        </div>
+        <button class="btn btn-primary" type="submit">Add Money</button>
     </form>
 {% endblock %}
