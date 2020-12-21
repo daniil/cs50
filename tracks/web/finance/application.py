@@ -43,15 +43,54 @@ if not os.environ.get("API_KEY"):
 @app.route("/")
 @login_required
 def index():
-    """Show portfolio of stocks"""
-    return apology("TODO")
+    return render_template("index.html")
 
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
-    """Buy shares of stock"""
-    return apology("TODO")
+    if request.method == "POST":
+        if not request.form.get("symbol"):
+            return apology("must provide a symbol", 400)
+        if not request.form.get("shares"):
+            return apology("must provide number of shares", 400)
+        if int(request.form.get("shares")) < 1:
+            return apology("must enter valid number of shares", 400)
+
+        # Lookup the stock
+        result = lookup(request.form.get("symbol"))
+
+        # If non-existant stock, render apology
+        if not result:
+            return apology("invalid symbol", 400)
+
+        # Check user cash to see if they can afford current shares of stock
+        cash_val = db.execute("SELECT cash FROM users WHERE id = :user_id",
+                              user_id=session["user_id"])
+
+        if cash_val[0]["cash"] < result["price"] * int(request.form.get("shares")):
+            return apology("can't afford", 400)
+
+        # Update users table cash column
+        update_cash = db.execute("UPDATE users SET cash = :new_cash_val WHERE id = :user_id",
+                                 new_cash_val=cash_val[0]["cash"] - result["price"] * int(request.form.get("shares")),
+                                 user_id=session["user_id"])
+
+        # Update transactions table with user information
+        insert_transaction = db.execute("INSERT INTO transactions (user_id, symbol, shares, price) VALUES (:user_id, :symbol, :shares, :price)",
+                                        user_id=session["user_id"],
+                                        symbol=request.form.get("symbol"),
+                                        shares=int(request.form.get("shares")),
+                                        price=result["price"])
+
+        if not update_cash or not insert_transaction:
+            return apology("couldn't purchase", 400)
+
+        flash(f"Bought {request.form.get('shares')} shares of {result['name']} for ${result['price']}")
+        return redirect("/")
+
+    else:
+        return render_template("buy.html")
 
 
 @app.route("/history")
