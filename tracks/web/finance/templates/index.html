@@ -13,6 +13,7 @@
                 <th>Shares</th>
                 <th>Price</th>
                 <th>TOTAL</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tfoot>
@@ -24,13 +25,16 @@
         <tbody>
             {% for stock in stocks %}
                 <tr>
-                    <td>{{ stock["symbol"] }}</td>
+                    <td class="js-stock-symbol">{{ stock["symbol"] }}</td>
                     <td>{{ stock["name"] }}</td>
                     <td>{{ stock["total_shares"] }}</td>
                     <td class="{{ 'text-success' if stock['price'] > stock['avg_price'] else 'text-danger' }}">
                         {{ stock["price"] | usd }}
                     </td>
                     <td>{{ (stock["price"] * stock["total_shares"]) | usd }}</td>
+                    <td>
+                        <button type="button" class="btn btn-secondary btn-sm" data-toggle="modal" data-target="#manageStockModal">Manage</button>
+                    </td>
                 </tr>
             {% endfor %}
 
@@ -40,4 +44,62 @@
             </tr>
         </tbody>
     </table>
+    <div class="modal" tabindex="-1" role="dialog" id="manageStockModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Buy or Sell <span class="js-stock-symbol-modal"></span> Stock</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form action="/buy" method="post">
+                <input type="hidden" name="symbol" value="" class="js-input-symbol" />
+                <div class="form-group">
+                    <input autocomplete="off" class="form-control" min="1" name="shares" placeholder="Shares" type="number" required>
+                    <button class="btn btn-primary" type="submit">Buy</button>
+                </div>
+            </form>
+            <hr />
+            <form action="/sell" method="post">
+                <input type="hidden" name="symbol" value="" class="js-input-symbol" />
+                <div class="form-group">
+                    <input autocomplete="off" class="form-control" min="1" name="shares" placeholder="Shares" type="number" required>
+                    <button class="btn btn-primary" type="submit">Sell</button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    let stockSymbolModal = document.querySelector('.js-stock-symbol-modal');
+    let inputSymbol = document.querySelectorAll('.js-input-symbol');
+
+    // On Modal open
+    $('#manageStockModal').on('shown.bs.modal', e => {
+        // Select current stock symbol by traversing through parents of the button that triggered the modal
+        let stockSymbol = e.relatedTarget.parentElement.parentElement.querySelector('.js-stock-symbol');
+
+        // Update Modal title with stock symbol
+        stockSymbolModal.innerText = stockSymbol.innerText;
+
+        // Update hidden input fields with the stock value
+        inputSymbol.forEach(el => el.value = stockSymbol.innerText);
+    });
+
+    // On Modal close
+    $('#manageStockModal').on('hidden.bs.modal', e => {
+        // Reset Modal title
+        stockSymbolModal.innerText = '';
+
+        // Reset all shares input fields
+        inputSymbol.forEach(el => el.parentNode.querySelector('input[type="number"]').value = '');
+
+        // Reset symbol hidden fields
+        inputSymbol.forEach(el => el.value = '');
+    });
 {% endblock %}

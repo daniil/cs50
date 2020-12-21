@@ -26,6 +26,7 @@ main .form-control
 {
     /* center form controls */
     display: inline-block;
+    vertical-align: middle;
 
     /* override Bootstrap's 100% width for form controls */
     width: auto;
