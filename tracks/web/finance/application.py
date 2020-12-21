@@ -112,28 +112,42 @@ def logout():
 @app.route("/quote", methods=["GET", "POST"])
 @login_required
 def quote():
-    """Get stock quote."""
-    return apology("TODO")
+    if request.method == "POST":
+        if not request.form.get("symbol"):
+            return apology("must provide symbol", 400)
+
+        # Lookup the stock
+        result = lookup(request.form.get("symbol"))
+
+        # If non-existant stock, render apology
+        if not result:
+            return apology("invalid symbol", 400)
+
+        return render_template("quoted.html", quote=result)
+
+    # Render Quote page ("GET")
+    else:
+        return render_template("quote.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
         if not request.form.get("password"):
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
         if not request.form.get("confirmation"):
-            return apology("must provide password confirmation", 403)
+            return apology("must provide password confirmation", 400)
         if not request.form.get("password") == request.form.get("confirmation"):
-            return apology("password and confirmation must match", 403)
+            return apology("password and confirmation must match", 400)
 
         # Check if user already exists with this username
         user = db.execute("SELECT username FROM users WHERE username = :username",
                           username=request.form.get("username"))
 
         if user:
-            return apology("this user already exists", 403)
+            return apology("this user already exists", 400)
 
         # Insert a new user with hashed password into DB
         new_user = db.execute("INSERT INTO users (username, hash) VALUES (:username, :hash)",
