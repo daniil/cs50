@@ -3,3 +3,4 @@
 .ssh
 .bash_history
 .local
+**/node_modules
