@@ -8,10 +8,7 @@ Planned functionality is having unique cohort spaces, timed unlock for lessons, 
 
 - `/register` - Register a new student or educator
 - `/login` - Logs in a student or educator
-- `/` - Current lecture + history of lectures (grouped by Unit, weekly?)
-- `/live` - Live questions for current lecture (ask a question, thumb up other questions, order by thumbs)
-- `/lecture/:lectureId` - Previous answered live questions, curated FAQ and Additional Resources
-- `/resources/:lectureId` - Resources only view
-- `/profile` - Manage user account (change password)
-- `/admin/users` - User management (invite user, approve user, manage user priviliges)
-- `/admin/live` - Management of current live questions (tagging questions as "answering" or "answered", answer field using Markdown)
+- `/` - Register/Login links for anonymous user, Live questions for current lecture for signed in user (ask a question, add an answer)
+- `/discourse/list` - All Topics in a list
+- `/discours/:topicId` - All Questions for a topic
+- `/admin` - Admin Section (add new topic, manage existing topics)
